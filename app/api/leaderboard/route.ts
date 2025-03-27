@@ -5,19 +5,20 @@ export async function GET() {
       return new Response("Failed to fetch Goated API", { status: 500 });
     }
 
-    const raw = await res.json();
+    const data = await res.json();
 
-    // Filtruojame ir rūšiuojame pagal this_month
-    const filtered = raw.data
+    // Rūšiuojame vartotojus pagal mėnesio statymų sumą mažėjančia tvarka
+    const sortedUsers = data.data
       .map((user: any) => ({
         name: user.name,
-        wager: user.wagered?.this_month || 0
+        wageredThisMonth: user.wagered.this_month || 0
       }))
-      .filter(user => user.wager > 0)
-      .sort((a, b) => b.wager - a.wager)
-      .slice(0, 10);
+      .sort((a, b) => b.wageredThisMonth - a.wageredThisMonth)
+      .slice(0, 10); // Pasirenkame Top 10 vartotojų
 
-    return Response.json(filtered);
+    return new Response(JSON.stringify(sortedUsers), {
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     return new Response("Server error", { status: 500 });
   }
