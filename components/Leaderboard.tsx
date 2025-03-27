@@ -9,35 +9,50 @@ type User = {
 
 export default function Leaderboard() {
   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch('/leaderboard')
-      .then(res => res.json())
-      .then(data => setUsers(data))
-      .catch(err => console.error('Klaida gaunant duomenis:', err));
+    fetch('/api/leaderboard')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('API klaida');
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('Gauti duomenys:', data);
+        if (Array.isArray(data)) {
+          setUsers(data);
+        } else {
+          throw new Error('Gauti ne masyvo tipo duomenys');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Klaida gaunant duomenis:', err);
+        setError(true);
+        setLoading(false);
+      });
   }, []);
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Klaida kraunant duomenis.</p>;
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Top 10 Wagerių nuo 2025-03-17</h1>
-      <table className="w-full border border-gray-300">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 border">#</th>
-            <th className="p-2 border">Vartotojas</th>
-            <th className="p-2 border">Wager ($)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, i) => (
-            <tr key={i}>
-              <td className="p-2 border text-center">{i + 1}</td>
-              <td className="p-2 border">{user.username}</td>
-              <td className="p-2 border text-right">{user.total.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4">Leaderboard</h1>
+      <div className="grid grid-cols-2 gap-4">
+        {users.map((user, index) => (
+          <div
+            key={index}
+            className="border p-2 rounded shadow-md flex justify-between"
+          >
+            <span>{user.username}</span>
+            <span>{user.total}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
