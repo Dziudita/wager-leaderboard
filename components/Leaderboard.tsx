@@ -24,15 +24,28 @@ export default function Leaderboard() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h1>Leaderboard</h1>
-      <ol>
-        {users.map((user, index) => (
-          <li key={index}>
-            {user.name} — {user.wager.toFixed(2)}
-          </li>
-        ))}
-      </ol>
+    <div style={{ padding: '2rem' }}>
+      <h1>Top 10 Mėnesio Wageris</h1>
+      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <thead>
+          <tr>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Vieta</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Slapyvardis</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>Wager (EUR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user, index) => (
+            <tr key={index}>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{index + 1}</td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{user.name}</td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>
+                {user.wager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
