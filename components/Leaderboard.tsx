@@ -9,50 +9,35 @@ type User = {
 
 export default function Leaderboard() {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/leaderboard')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('API klaida');
-        }
+    fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA')
+      .then((res) => {
+        if (!res.ok) throw new Error('Klaida gaunant duomenis');
         return res.json();
       })
-      .then(data => {
-        console.log('Gauti duomenys:', data);
-        if (Array.isArray(data)) {
-          setUsers(data);
-        } else {
-          throw new Error('Gauti ne masyvo tipo duomenys');
-        }
-        setLoading(false);
+      .then((data) => {
+        // Pritaikyk, jei struktūra skiriasi
+        setUsers(data?.users || []);
       })
-      .catch(err => {
-        console.error('Klaida gaunant duomenis:', err);
-        setError(true);
-        setLoading(false);
+      .catch((err) => {
+        setError(err.message);
       });
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Klaida kraunant duomenis.</p>;
+  if (error) return <div>Klaida kraunant duomenis: {error}</div>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Leaderboard</h1>
-      <div className="grid grid-cols-2 gap-4">
+    <div>
+      <h1>Leaderboard</h1>
+      <ul>
         {users.map((user, index) => (
-          <div
-            key={index}
-            className="border p-2 rounded shadow-md flex justify-between"
-          >
-            <span>{user.username}</span>
-            <span>{user.total}</span>
-          </div>
+          <li key={index}>
+            {user.username} - {user.total.toFixed(2)}
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
