@@ -18,7 +18,13 @@ export default function Leaderboard() {
         return res.json();
       })
       .then((data) => {
-        const filtered = data.users
+        const rawUsers = data?.users || data; // palaikymas jei data yra array
+
+        if (!Array.isArray(rawUsers)) {
+          throw new Error('Blogas duomenų formatas');
+        }
+
+        const filtered = rawUsers
           .filter((u: any) => typeof u.total === 'number')
           .sort((a: User, b: User) => b.total - a.total)
           .slice(0, 10);
