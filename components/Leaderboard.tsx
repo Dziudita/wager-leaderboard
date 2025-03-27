@@ -43,7 +43,11 @@ export default function Leaderboard() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, idx) => (
+          users.map((user) => (
+  <div key={user.username}>
+    {user.username} — {typeof user.total === 'number' ? user.total.toFixed(2) : 'N/A'}
+  </div>
+))
             <tr key={idx}>
               <td style={{ padding: '0.5rem 0' }}>{idx + 1}</td>
               <td>{user.username}</td>
