@@ -1,44 +1,25 @@
-'use client';
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
-type User = {
-  username: string;
-  total: number;
-};
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function Leaderboard() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState<string | null>(null);
+function Leaderboard() {
+  const { data, error } = useSWR('/api/leaderboard', fetcher);
 
-  useEffect(() => {
-    fetch('/api/leaderboard')
-      .then((res) => {
-        if (!res.ok) throw new Error('Klaida iš API');
-        return res.json();
-      })
-      .then((data) => setUsers(data || []))
-      .catch((err) => setError('Klaida kraunant duomenis: ' + err.message));
-  }, []);
-
-  if (error) return <div>{error}</div>;
+  if (error) return <div>Klaida kraunant duomenis</div>;
+  if (!data) return <div>Kraunama...</div>;
 
   return (
     <div>
-      <h1>Leaderboard</h1>
-      {users.length === 0 ? (
-        <p>Loading...</p>
-      ) : (
-        <ul>
-          {users
-            .sort((a, b) => b.total - a.total)
-            .slice(0, 10)
-            .map((user, i) => (
-              <li key={i}>
-                {i + 1}. {user.username} — {user.total.toFixed(2)}
-              </li>
-            ))}
-        </ul>
-      )}
+      <h1>Top 10 vartotojų mėnesio statymai</h1>
+      <ul>
+        {data.map((user: any, index: number) => (
+          <li key={index}>
+            {index + 1}. {user.name} — {user.wageredThisMonth.toFixed(2)}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
+
+export default Leaderboard;
