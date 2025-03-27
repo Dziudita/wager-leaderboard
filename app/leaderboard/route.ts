@@ -14,7 +14,7 @@ export async function GET() {
         name: user.name,
         wager: user.wagered.this_month,
       }))
-      .sort((a, b) => b.wager - a.wager)
+     .sort((a: { username: string; total: number }, b: { username: string; total: number }) => b.total - a.total)
       .slice(0, 10);
 
     return Response.json(top10);
