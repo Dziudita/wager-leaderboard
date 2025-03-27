@@ -12,14 +12,13 @@ export default function Leaderboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA')
+    fetch('/api/leaderboard') // NAUJAS adresas
       .then((res) => {
-        if (!res.ok) throw new Error('Klaida gaunant duomenis');
+        if (!res.ok) throw new Error('Klaida iš API');
         return res.json();
       })
       .then((data) => {
-        // Pritaikyk, jei struktūra skiriasi
-        setUsers(data?.users || []);
+        setUsers(data.users || []);
       })
       .catch((err) => {
         setError(err.message);
