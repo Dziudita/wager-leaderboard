@@ -1,25 +1,24 @@
-import { NextResponse } from 'next/server';
-
 export async function GET() {
   try {
-    const res = await fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA');
+    const res = await fetch("https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA");
     if (!res.ok) {
-      return NextResponse.json({ error: 'Nepavyko gauti duomenų iš Goated API' }, { status: 500 });
+      return new Response("Failed to fetch Goated API", { status: 500 });
     }
 
-    const data = await res.json();
+    const json = await res.json();
+    const data = json.data;
 
-    // Apdorojame ir rūšiuojame vartotojus pagal mėnesinius statymus mažėjančia tvarka
-    const sortedUsers = data.data
+    // Rūšiuojame pagal MĖNESINĮ wager'į ir paimame top 10
+    const top10 = data
       .map((user: any) => ({
         name: user.name,
-        wageredThisMonth: user.wagered.this_month || 0,
+        wager: user.wagered.this_month,
       }))
-      .sort((a, b) => b.wageredThisMonth - a.wageredThisMonth)
-      .slice(0, 10); // Pasirenkame Top 10 vartotojų
+      .sort((a, b) => b.wager - a.wager)
+      .slice(0, 10);
 
-    return NextResponse.json(sortedUsers);
+    return Response.json(top10);
   } catch (error) {
-    return NextResponse.json({ error: 'Serverio klaida' }, { status: 500 });
+    return new Response("Server error", { status: 500 });
   }
 }
