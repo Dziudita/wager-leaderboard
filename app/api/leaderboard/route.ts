@@ -6,8 +6,15 @@ export async function GET() {
       return new Response("Failed to fetch Goated API", { status: 500 });
     }
 
-    const data = await res.json();
-    return Response.json(data);
+    const json = await res.json();
+
+    // Grąžiname tik reikalingus duomenis
+    const leaderboard = json.data.map((user: any) => ({
+      username: user.name,
+      total: user.wagered?.all_time || 0
+    }));
+
+    return Response.json(leaderboard);
   } catch (error) {
     return new Response("Server error", { status: 500 });
   }
