@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 
 type User = {
-  name: string;
-  wager: number;
+  username: string;
+  total: number;
 };
 
 export default function Leaderboard() {
@@ -17,31 +17,37 @@ export default function Leaderboard() {
         if (!res.ok) throw new Error('Klaida iš API');
         return res.json();
       })
-      .then((data) => setUsers(data))
-      .catch((err) => setError('Klaida kraunant duomenis: ' + err.message));
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((err) => {
+        setError(`Klaida kraunant duomenis: ${err.message}`);
+      });
   }, []);
 
-  if (error) return <p>{error}</p>;
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1>Top 10 Mėnesio Wageris</h1>
-      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+        Leaderboard
+      </h1>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Vieta</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Slapyvardis</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Wager (EUR)</th>
+            <th style={{ textAlign: 'left' }}>#</th>
+            <th style={{ textAlign: 'left' }}>Username</th>
+            <th style={{ textAlign: 'left' }}>Monthly Wager</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
-            <tr key={index}>
-              <td style={{ border: '1px solid black', padding: '8px' }}>{index + 1}</td>
-              <td style={{ border: '1px solid black', padding: '8px' }}>{user.name}</td>
-              <td style={{ border: '1px solid black', padding: '8px' }}>
-                {user.wager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </td>
+          {users.map((user, idx) => (
+            <tr key={idx}>
+              <td style={{ padding: '0.5rem 0' }}>{idx + 1}</td>
+              <td>{user.username}</td>
+              <td>{user.total.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
