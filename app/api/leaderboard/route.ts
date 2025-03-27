@@ -5,22 +5,19 @@ export async function GET() {
       return new Response("Failed to fetch Goated API", { status: 500 });
     }
 
-    const result = await res.json();
+    const raw = await res.json();
 
-    // Kovo 17-osios data kaip UNIX timestamp (milisekundėmis)
-    const cutoffDate = new Date("2024-03-17").getTime();
-
-    const filteredData = result.data.map((user: any) => {
-      // Jei yra data logika iš API, naudoti čia
-      return {
+    // Filtruojame ir rūšiuojame pagal this_month
+    const filtered = raw.data
+      .map((user: any) => ({
         name: user.name,
-        total: user.wagered.all_time // arba pakeisk į user.wagered.since_march_17 jei būtų toks
-      };
-    })
-    .sort((a: any, b: any) => b.total - a.total)
-    .slice(0, 10);
+        wager: user.wagered?.this_month || 0
+      }))
+      .filter(user => user.wager > 0)
+      .sort((a, b) => b.wager - a.wager)
+      .slice(0, 10);
 
-    return Response.json(filteredData);
+    return Response.json(filtered);
   } catch (error) {
     return new Response("Server error", { status: 500 });
   }
