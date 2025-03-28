@@ -35,23 +35,37 @@ export default function Leaderboard() {
         fontFamily: 'Arial, sans-serif',
       }}
     >
-    
-      {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold', textAlign: 'center' }}>Johnny Knox</h1>
+      <h2 style={{ fontSize: '32px', textAlign: 'center', marginTop: '0' }}>Monthly</h2>
+      <h3 style={{ fontSize: '24px', textAlign: 'center', marginTop: '30px', color: 'white' }}>Goated Leaderboard</h3>
 
-      <table style={{ width: '100%', marginTop: '30px', color: 'white', borderCollapse: 'collapse' }}>
+      {error && (
+        <p style={{ color: 'red', textAlign: 'center' }}>
+          Error loading leaderboard: {error}
+        </p>
+      )}
+
+      <table
+        style={{
+          width: '100%',
+          marginTop: '30px',
+          color: 'white',
+          borderCollapse: 'collapse',
+        }}
+      >
         <thead>
           <tr style={{ borderBottom: '2px solid #FFD700' }}>
-            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>Place</th>
-            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>User</th>
-            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>Wager</th>
+            <th style={{ textAlign: 'center', width: '10%', padding: '10px', color: '#FFD700' }}>Place</th>
+            <th style={{ textAlign: 'left', width: '45%', padding: '10px', color: '#FFD700' }}>User</th>
+            <th style={{ textAlign: 'right', width: '45%', padding: '10px', color: '#FFD700' }}>Wager</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user, index) => (
             <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
-              <td style={{ padding: '10px' }}>{index + 1}.</td>
-              <td style={{ padding: '10px' }}>{user.username}</td>
-              <td style={{ padding: '10px' }}>${user.total.toFixed(2)}</td>
+              <td style={{ textAlign: 'center', padding: '10px' }}>{index + 1}.</td>
+              <td style={{ textAlign: 'left', padding: '10px' }}>{user.username}</td>
+              <td style={{ textAlign: 'right', padding: '10px' }}>${user.total.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
