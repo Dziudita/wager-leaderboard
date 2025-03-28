@@ -1,12 +1,15 @@
 export async function GET() {
   try {
     const res = await fetch("https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA");
-    if (!res.ok) return new Response("Failed to fetch", { status: 500 });
+
+    if (!res.ok) {
+      return new Response("Failed to fetch", { status: 500 });
+    }
 
     const json = await res.json();
     const users = json.data || [];
 
-    // Naudojam `this_month` wagerį
+    // Pataisytas tipas (u: any)
     const topUsers = users
       .map((u: any) => ({
         username: u.name,
