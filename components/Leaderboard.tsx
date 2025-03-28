@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 
 type User = {
-  name: string;
-  wager: number;
+  username: string;
+  total: number;
 };
 
 export default function Leaderboard() {
@@ -15,10 +15,11 @@ export default function Leaderboard() {
     fetch('/api/leaderboard')
       .then((res) => {
         if (!res.ok) throw new Error('Klaida iš API');
-        return res.json();
+        return res.json(); // <- Šiuo atveju grąžina masyvą, ne objektą
       })
       .then((data) => {
-        setUsers(data || []);
+        console.log('Gauti duomenys:', data);
+        setUsers(data || []); // <- naudok `data` tiesiai
       })
       .catch((err) => {
         setError(err.message);
@@ -34,20 +35,20 @@ export default function Leaderboard() {
       {error ? (
         <p style={{ color: 'red' }}>Klaida kraunant duomenis: {error}</p>
       ) : (
-        <table>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Vartotojas</th>
-              <th>Mėnesinis wageris</th>
+              <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc' }}>#</th>
+              <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc' }}>Vartotojas</th>
+              <th style={{ textAlign: 'left', borderBottom: '1px solid #ccc' }}>Mėnesinis wageris</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{user.name}</td>
-                <td>{user.wager.toFixed(2)}</td>
+                <td>{user.username}</td>
+                <td>{user.total.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
