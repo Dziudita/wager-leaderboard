@@ -36,11 +36,9 @@ export default function Leaderboard() {
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>
-        Johnny Knox
-      </h1>
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
       <h2 style={{ fontSize: '32px', margin: 0 }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: 'white', marginBottom: '40px' }}>Goated Leaderboard</h3>
+      <h3 style={{ fontSize: '24px', marginBottom: '40px', color: 'white' }}>Goated Leaderboard</h3>
 
       {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
 
@@ -55,6 +53,7 @@ export default function Leaderboard() {
       >
         <thead>
           <tr style={{ borderBottom: '2px solid #FFD700' }}>
+            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>Place</th>
             <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>User</th>
             <th style={{ textAlign: 'right', padding: '10px', color: '#FFD700' }}>Wager</th>
           </tr>
@@ -62,6 +61,7 @@ export default function Leaderboard() {
         <tbody>
           {users.map((user, index) => (
             <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{index + 1}.</td>
               <td style={{ padding: '10px', textAlign: 'left' }}>{user.username}</td>
               <td style={{ padding: '10px', textAlign: 'right' }}>${user.total.toFixed(2)}</td>
             </tr>
