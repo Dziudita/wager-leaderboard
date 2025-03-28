@@ -7,10 +7,15 @@ export async function GET() {
     }
 
     const json = await res.json();
-    const users = json.data || [];
+    const users: {
+      name?: string;
+      wagered?: {
+        this_month?: number;
+      };
+    }[] = json.data || [];
 
     const topUsers = users
-      .map((u: { name?: string; wagered?: { this_month?: number } }) => {
+      .map((u) => {
         const wager = u.wagered?.this_month ?? 0;
         return {
           name: u.name ?? "Nežinomas",
