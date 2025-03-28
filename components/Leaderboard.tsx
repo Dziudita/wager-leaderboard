@@ -65,12 +65,7 @@ export default function Leaderboard() {
         fontFamily: 'Arial, sans-serif',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', textAlign: 'center' }}>
-        Johnny Knox
-      </h1>
-      <h2 style={{ fontSize: '32px', marginTop: 0, textAlign: 'center' }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: 'white', textAlign: 'center' }}>
-        Goated Leaderboard
+
       </h3>
 
       {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
