@@ -16,16 +16,16 @@ export async function GET() {
 
     const topUsers = users
       .map((u) => {
-        const actualName = (u.name ?? "").toLowerCase().trim();
+        let wager = u.wagered?.this_month ?? 0;
 
-        // Log – padės debugint
-        console.log("User:", u.name, "| Wager:", u.wagered?.this_month);
-
-        const wager = actualName === "dziii" ? 160000 : u.wagered?.this_month ?? 0;
+        // Override for specific user
+        if (u.name === "Dziii") {
+          wager = 160000;
+        }
 
         return {
           name: u.name ?? "Unknown",
-          wager,
+          wager: typeof wager === "number" ? wager : 0,
         };
       })
       .sort((a, b) => b.wager - a.wager)
