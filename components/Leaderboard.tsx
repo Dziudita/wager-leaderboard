@@ -48,7 +48,7 @@ export default function Leaderboard() {
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{user.username}</td>
-                <td>{user.total.toFixed(2)}</td>
+                <td>{user.total ? user.total.toFixed(2) : "0.00"}</td>
               </tr>
             ))}
           </tbody>
