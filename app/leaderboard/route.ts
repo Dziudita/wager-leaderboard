@@ -10,11 +10,11 @@ export async function GET() {
     const users = json.data || [];
 
     const topUsers = users
-      .map((u: any) => {
+      .map((u: { name?: string; wagered?: { this_month?: number } }) => {
         const wager = u.wagered?.this_month ?? 0;
         return {
           name: u.name ?? "Nežinomas",
-          wager: typeof wager === "number" ? wager : 0
+          wager: typeof wager === "number" ? wager : 0,
         };
       })
       .sort((a, b) => b.wager - a.wager)
