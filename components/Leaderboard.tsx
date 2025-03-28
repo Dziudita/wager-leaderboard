@@ -1,3 +1,7 @@
+type User = {
+  username: string;
+  total: number;
+};
 'use client';
 
 import { useEffect, useState } from 'react';
