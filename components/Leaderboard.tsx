@@ -36,9 +36,6 @@ export default function Leaderboard() {
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
-      <h2 style={{ fontSize: '32px', margin: 0 }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', marginBottom: '40px', color: 'white' }}>Goated Leaderboard</h3>
 
       {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
 
