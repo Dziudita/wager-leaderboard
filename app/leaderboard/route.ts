@@ -25,7 +25,7 @@ export async function GET() {
 
         return {
           name: u.name ?? "Unknown",
-          wager: typeof wager === "number" ? wager : 0,
+          wager: wager,
         };
       })
       .sort((a, b) => b.wager - a.wager)
