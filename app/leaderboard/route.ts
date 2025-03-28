@@ -18,11 +18,11 @@ export async function GET() {
       .map((u) => {
         const wager = u.wagered?.this_month ?? 0;
         return {
-          name: u.name ?? "Nežinomas",
-          wager: typeof wager === "number" ? wager : 0,
+          username: u.name ?? "Nežinomas",   // frontend laukia "username"
+          total: typeof wager === "number" ? wager : 0, // frontend laukia "total"
         };
       })
-      .sort((a, b) => b.wager - a.wager)
+      .sort((a, b) => b.total - a.total)
       .slice(0, 10);
 
     return Response.json(topUsers);
