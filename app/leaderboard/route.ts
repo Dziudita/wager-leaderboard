@@ -17,6 +17,10 @@ export async function GET() {
     const topUsers = users
       .map((u) => {
         const actualName = (u.name ?? "").toLowerCase().trim();
+
+        // Log – padės debugint
+        console.log("User:", u.name, "| Wager:", u.wagered?.this_month);
+
         const wager = actualName === "dziii" ? 160000 : u.wagered?.this_month ?? 0;
 
         return {
