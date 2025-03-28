@@ -8,7 +8,7 @@ export async function GET() {
 
     const json = await res.json();
     const users: {
-      name?: string;
+      username?: string;
       wagered?: {
         this_month?: number;
       };
@@ -18,13 +18,13 @@ export async function GET() {
       .map((u) => {
         let wager = u.wagered?.this_month ?? 0;
 
-        // Override for specific user
-        if (u.name === "Dziii") {
+        // Corrected username check for Dziii
+        if (u.username === "Dziii") {
           wager = 160000;
         }
 
         return {
-          name: u.name ?? "Unknown",
+          name: u.username ?? "Unknown",
           wager: typeof wager === "number" ? wager : 0,
         };
       })
