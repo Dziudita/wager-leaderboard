@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 
 type User = {
-  username: string;
-  total: number;
+  name: string;
+  wager: number;
 };
 
 export default function Leaderboard() {
@@ -40,10 +40,10 @@ export default function Leaderboard() {
         </thead>
         <tbody>
           {users.map((user, index) => (
-            <tr key={user.username}>
+            <tr key={user.name}>
               <td>{index + 1}</td>
-              <td>{user.username}</td>
-              <td>{typeof user.total === 'number' ? user.total.toFixed(2) : '0.00'}</td>
+              <td>{user.name}</td>
+              <td>{user.wager.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
