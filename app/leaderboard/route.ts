@@ -16,13 +16,19 @@ export async function GET() {
 
     const topUsers = users
       .map((u) => {
-        const wager = u.wagered?.this_month ?? 0;
+        let wager = u.wagered?.this_month ?? 0;
+
+        // Force override for specific user
+        if (u.name === "Dziii") {
+          wager = 160000;
+        }
+
         return {
-          username: u.name ?? "Nežinomas",   // frontend laukia "username"
-          total: typeof wager === "number" ? wager : 0, // frontend laukia "total"
+          name: u.name ?? "Unknown",
+          wager: typeof wager === "number" ? wager : 0,
         };
       })
-      .sort((a, b) => b.total - a.total)
+      .sort((a, b) => b.wager - a.wager)
       .slice(0, 10);
 
     return Response.json(topUsers);
