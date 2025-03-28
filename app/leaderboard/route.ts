@@ -19,7 +19,7 @@ export async function GET() {
         let wager = u.wagered?.this_month ?? 0;
 
         // Force override for specific user
-        if (u.name === "Dziii") {
+        if ((u.name ?? "").toLowerCase() === "dziii") {
           wager = 160000;
         }
 
