@@ -7,13 +7,12 @@ export async function GET() {
     }
 
     const json = await res.json();
-    const users = json.data || [];
+    const users: any[] = json.data || [];
 
-    // Pataisytas tipas (u: any)
     const topUsers = users
-      .map((u: any) => ({
+      .map((u) => ({
         username: u.name,
-        total: u.wagered?.this_month || 0
+        total: u.wagered?.this_month || 0,
       }))
       .filter((u) => u.total > 0)
       .sort((a, b) => b.total - a.total)
