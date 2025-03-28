@@ -1,1 +1,70 @@
+'use client';
 
+import { useEffect, useState } from 'react';
+
+type User = {
+  username: string;
+  total: number;
+};
+
+export default function Leaderboard() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/leaderboard')
+      .then((res) => {
+        if (!res.ok) throw new Error('API error');
+        return res.json();
+      })
+      .then((data) => {
+        setUsers(data || []);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  }, []);
+
+  return (
+    <div
+      style={{
+        backgroundColor: '#000',
+        color: '#FFD700',
+        minHeight: '100vh',
+        padding: '40px',
+        fontFamily: 'Arial, sans-serif',
+        textAlign: 'center',
+      }}
+    >
+
+      {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
+
+      <table
+        style={{
+          width: '100%',
+          maxWidth: '800px',
+          margin: '0 auto',
+          color: 'white',
+          borderCollapse: 'collapse',
+        }}
+      >
+        <thead>
+          <tr style={{ borderBottom: '2px solid #FFD700' }}>
+            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>Place</th>
+            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>User</th>
+            <th style={{ textAlign: 'right', padding: '10px', color: '#FFD700' }}>Wager</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user, index) => (
+            <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{index + 1}.</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{user.username}</td>
+              <td style={{ padding: '10px', textAlign: 'right' }}>${user.total.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
