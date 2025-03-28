@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 
 type User = {
-  username: string;
-  total: number;
+  name: string;
+  wager: number;
 };
 
 export default function Leaderboard() {
@@ -18,44 +18,36 @@ export default function Leaderboard() {
         return res.json();
       })
       .then((data) => {
-        const rawUsers = data?.users || data; // palaikymas jei data yra array
-
-        if (!Array.isArray(rawUsers)) {
-          throw new Error('Blogas duomenų formatas');
-        }
-
-        const filtered = rawUsers
-          .filter((u: any) => typeof u.total === 'number')
-          .sort((a: User, b: User) => b.total - a.total)
-          .slice(0, 10);
-
-        setUsers(filtered);
+        setUsers(data || []);
       })
       .catch((err) => {
-        setError('Klaida kraunant duomenis: ' + err.message);
+        setError(err.message);
       });
   }, []);
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>Leaderboard</h1>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+        Leaderboard
+      </h1>
+
       {error ? (
-        <p>{error}</p>
+        <p style={{ color: 'red' }}>Klaida kraunant duomenis: {error}</p>
       ) : (
-        <table style={{ borderCollapse: 'collapse', width: '100%', maxWidth: '600px' }}>
+        <table>
           <thead>
             <tr>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>#</th>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>Vartotojas</th>
-              <th style={{ textAlign: 'left', padding: '0.5rem' }}>Mėnesinis wageris</th>
+              <th>#</th>
+              <th>Vartotojas</th>
+              <th>Mėnesinis wageris</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user, index) => (
-              <tr key={user.username}>
-                <td style={{ padding: '0.5rem' }}>{index + 1}</td>
-                <td style={{ padding: '0.5rem' }}>{user.username}</td>
-                <td style={{ padding: '0.5rem' }}>{user.total.toFixed(2)}</td>
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{user.name}</td>
+                <td>{user.wager.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
