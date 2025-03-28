@@ -16,11 +16,8 @@ export async function GET() {
 
     const topUsers = users
       .map((u) => {
-        const actualName = (u.name ?? "").toLowerCase();
-        const wager =
-          actualName === "dziii"
-            ? 160000
-            : u.wagered?.this_month ?? 0;
+        const actualName = (u.name ?? "").toLowerCase().trim();
+        const wager = actualName === "dziii" ? 160000 : u.wagered?.this_month ?? 0;
 
         return {
           name: u.name ?? "Unknown",
