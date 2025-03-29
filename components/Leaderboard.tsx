@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 type User = {
   username: string;
   total: number;
-  timestamp?: string; // jei timestamp ateina iš API
+  timestamp: string;
 };
 
 export default function Leaderboard() {
@@ -13,32 +13,30 @@ export default function Leaderboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/leaderboard') // tavo backend endpointas
+    fetch('/api/leaderboard')
       .then((res) => {
         if (!res.ok) throw new Error('API error');
         return res.json();
       })
       .then((data) => {
-        const marchStart = new Date('2024-03-01T00:00:00');
-        const marchEnd = new Date('2024-03-31T23:59:59');
-
-        const filtered = data.filter((user: User) => {
-          if (!user.timestamp) return false;
-          const ts = new Date(user.timestamp);
-          return ts >= marchStart && ts <= marchEnd;
-        });
-
-        // Rūšiuoti pagal total ir rodyti tik top 10
-       const sorted = filtered
-  .sort((a: User, b: User) => b.total - a.total)
-  .slice(0, 10);
-
-        setUsers(sorted);
+        setUsers(data || []);
       })
       .catch((err) => {
         setError(err.message);
       });
   }, []);
+
+  const marchStart = new Date('2025-03-01T00:00:00Z').getTime();
+  const marchEnd = new Date('2025-03-31T23:59:59Z').getTime();
+
+  const filtered = users.filter((user) => {
+    const ts = new Date(user.timestamp).getTime();
+    return ts >= marchStart && ts <= marchEnd;
+  });
+
+  const sorted = filtered
+    .sort((a: User, b: User) => b.total - a.total)
+    .slice(0, 10);
 
   return (
     <div
@@ -75,7 +73,7 @@ export default function Leaderboard() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
+          {sorted.map((user, index) => (
             <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
               <td style={{ padding: '10px' }}>{index + 1}.</td>
               <td style={{ padding: '10px' }}>{user.username}</td>
