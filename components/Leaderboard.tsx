@@ -36,14 +36,20 @@ export default function Leaderboard() {
         textAlign: 'center',
       }}
     >
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>
+        Johnny Knox
+      </h1>
+      <h2 style={{ fontSize: '32px', margin: '10px 0' }}>Monthly</h2>
+      <h3 style={{ fontSize: '24px', color: 'white', marginBottom: '30px' }}>
+        Goated Leaderboard
+      </h3>
 
       {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
 
       <table
         style={{
           width: '100%',
-          maxWidth: '800px',
-          margin: '0 auto',
+          marginTop: '30px',
           color: 'white',
           borderCollapse: 'collapse',
         }}
@@ -58,9 +64,11 @@ export default function Leaderboard() {
         <tbody>
           {users.map((user, index) => (
             <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
-              <td style={{ padding: '10px', textAlign: 'left' }}>{index + 1}.</td>
+              <td style={{ padding: '10px' }}>{index + 1}.</td>
               <td style={{ padding: '10px', textAlign: 'left' }}>{user.username}</td>
-              <td style={{ padding: '10px', textAlign: 'right' }}>${user.total.toFixed(2)}</td>
+              <td style={{ padding: '10px', textAlign: 'right' }}>
+                ${user.total.toFixed(2)}
+              </td>
             </tr>
           ))}
         </tbody>
