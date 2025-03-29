@@ -29,7 +29,10 @@ export default function Leaderboard() {
         });
 
         // Rūšiuoti pagal total ir rodyti tik top 10
-        const sorted = filtered.sort((a, b) => b.total - a.total).slice(0, 10);
+       const sorted = filtered
+  .sort((a: User, b: User) => b.total - a.total)
+  .slice(0, 10);
+
         setUsers(sorted);
       })
       .catch((err) => {
