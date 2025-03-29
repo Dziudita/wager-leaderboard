@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react';
 type User = {
   username: string;
   total: number;
-  timestamp: string;
+};
+
+type ApiUser = {
+  username: string;
+  wager: number;
+  createdAt: string;
 };
 
 export default function Leaderboard() {
@@ -13,30 +18,33 @@ export default function Leaderboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/leaderboard')
+    fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA')
       .then((res) => {
         if (!res.ok) throw new Error('API error');
         return res.json();
       })
-      .then((data) => {
-        setUsers(data || []);
+      .then((data: ApiUser[]) => {
+        // Filtruojame tik kovo mėnesį
+        const marchUsers = data.filter((user) => {
+          const created = new Date(user.createdAt);
+          return created.getMonth() === 2; // 0 = Sausis, 2 = Kovas
+        });
+
+        // Sum up total wager per user
+        const totals: Record<string, number> = {};
+        marchUsers.forEach((u) => {
+          totals[u.username] = (totals[u.username] || 0) + u.wager;
+        });
+
+        const combined = Object.entries(totals).map(([username, total]) => ({ username, total }));
+        const sorted = combined.sort((a, b) => b.total - a.total).slice(0, 10);
+
+        setUsers(sorted);
       })
       .catch((err) => {
         setError(err.message);
       });
   }, []);
-
-  const marchStart = new Date('2025-03-01T00:00:00Z').getTime();
-  const marchEnd = new Date('2025-03-31T23:59:59Z').getTime();
-
-  const filtered = users.filter((user) => {
-    const ts = new Date(user.timestamp).getTime();
-    return ts >= marchStart && ts <= marchEnd;
-  });
-
-  const sorted = filtered
-    .sort((a: User, b: User) => b.total - a.total)
-    .slice(0, 10);
 
   return (
     <div
@@ -49,9 +57,7 @@ export default function Leaderboard() {
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>
-        Johnny Knox
-      </h1>
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
       <h2 style={{ fontSize: '32px', marginTop: 0 }}>Monthly</h2>
       <h3 style={{ fontSize: '24px', color: 'white' }}>Goated Leaderboard</h3>
 
@@ -73,7 +79,7 @@ export default function Leaderboard() {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((user, index) => (
+          {users.map((user, index) => (
             <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
               <td style={{ padding: '10px' }}>{index + 1}.</td>
               <td style={{ padding: '10px' }}>{user.username}</td>
