@@ -5,25 +5,23 @@ export async function GET() {
     const res = await fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA');
 
     if (!res.ok) {
-      throw new Error('Failed to fetch external leaderboard data');
+      throw new Error('Failed to fetch leaderboard');
     }
 
-    const data = await res.json();
+    const json = await res.json();
 
-    // Filtruojame KOVO mėnesio duomenis (pradedant nuo kovo 1 d.)
-    const marchStart = new Date('2024-03-01T00:00:00Z');
-    const filtered = data?.data?.filter((user: any) => {
-      const createdAt = new Date(user.createdAt);
-      return createdAt >= marchStart;
-    });
+    // Filtruojame tik vartotojus, kurie turi wager šį mėnesį
+    const filtered = json.data.filter((user: any) => user.wagered?.this_month > 0);
 
-    // Surūšiuojame pagal total nusileidžiančiai
-    const sorted = filtered.sort((a: any, b: any) => b.total - a.total);
+    // Rikiuojame nuo didžiausio prie mažiausio
+    const sorted = filtered.sort((a: any, b: any) => b.wagered.this_month - a.wagered.this_month);
 
-    return NextResponse.json(sorted);
+    // Grąžinam top 10
+    const top10 = sorted.slice(0, 10);
+
+    return NextResponse.json(top10);
   } catch (error) {
-    console.error('[API ERROR]', error);
+    console.error('API ERROR:', error);
     return NextResponse.json({ error: 'API error' }, { status: 500 });
   }
 }
-
