@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 type User = {
   username: string;
   total: number;
-  timestamp?: number;
+  createdAt?: string;
+  timestamp?: string;
 };
 
 export default function Leaderboard() {
@@ -13,24 +14,21 @@ export default function Leaderboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/proxy')
+    fetch('/api/leaderboard')
       .then((res) => {
         if (!res.ok) throw new Error('API error');
         return res.json();
       })
-      .then((data: User[]) => {
-        const marchStart = new Date('2025-03-01T00:00:00Z').getTime();
-        const marchEnd = new Date('2025-04-01T00:00:00Z').getTime();
-
-        const filtered = data.filter((user) => {
-          const time = user.timestamp || 0;
-          return time >= marchStart && time < marchEnd;
+      .then((data) => {
+        const list = Array.isArray(data) ? data : data?.data || [];
+        const marchUsers = list.filter((entry: any) => {
+          const date = new Date(entry.createdAt || entry.timestamp);
+          return date.getMonth() === 2; // 0 = Sausis, 2 = Kovas
         });
-
-        const sorted = filtered.sort((a, b) => b.total - a.total).slice(0, 10);
-        setUsers(sorted);
+        setUsers(marchUsers);
       })
       .catch((err) => {
+        console.error(err);
         setError(err.message);
       });
   }, []);
@@ -46,74 +44,39 @@ export default function Leaderboard() {
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>
-        Johnny Knox
-      </h1>
-      <h2 style={{ fontSize: '32px', marginTop: 0 }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: 'white' }}>Goated Leaderboard</h3>
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
+      <h2 style={{ fontSize: '32px', marginBottom: '10px' }}>Monthly</h2>
+      <h3 style={{ fontSize: '24px', color: 'white', marginBottom: '30px' }}>Goated Leaderboard</h3>
 
-      {error && (
-        <p style={{ color: 'red', marginTop: '20px' }}>
-          Error loading leaderboard: {error}
-        </p>
-      )}
+      {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
 
-      {!error && (
-        <table
-          style={{
-            width: '100%',
-            marginTop: '30px',
-            color: 'white',
-            borderCollapse: 'collapse',
-          }}
-        >
-          <thead>
-            <tr style={{ borderBottom: '2px solid #FFD700' }}>
-              <th
-                style={{
-                  textAlign: 'left',
-                  padding: '10px',
-                  color: '#FFD700',
-                }}
-              >
-                Place
-              </th>
-              <th
-                style={{
-                  textAlign: 'left',
-                  padding: '10px',
-                  color: '#FFD700',
-                }}
-              >
-                User
-              </th>
-              <th
-                style={{
-                  textAlign: 'right',
-                  padding: '10px',
-                  color: '#FFD700',
-                }}
-              >
-                Wager
-              </th>
+      <table
+        style={{
+          width: '100%',
+          marginTop: '30px',
+          color: 'white',
+          borderCollapse: 'collapse',
+        }}
+      >
+        <thead>
+          <tr style={{ borderBottom: '2px solid #FFD700' }}>
+            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>Place</th>
+            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>User</th>
+            <th style={{ textAlign: 'right', padding: '10px', color: '#FFD700' }}>Wager</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user, index) => (
+            <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
+              <td style={{ padding: '10px' }}>{index + 1}.</td>
+              <td style={{ padding: '10px' }}>{user.username}</td>
+              <td style={{ padding: '10px', textAlign: 'right' }}>
+                ${user.total.toFixed(2)}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => (
-              <tr
-                key={user.username}
-                style={{ borderBottom: '1px solid #444' }}
-              >
-                <td style={{ padding: '10px' }}>{index + 1}.</td>
-                <td style={{ padding: '10px' }}>{user.username}</td>
-                <td style={{ padding: '10px', textAlign: 'right' }}>
-                  ${user.total.toFixed(2)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
