@@ -1,11 +1,8 @@
-'use client';
+import Leaderboard from '@/components/Leaderboard';
 
-import React from 'react';
-import Leaderboard from '../components/Leaderboard';
-
-export default function Page() {
+export default function Home() {
   return (
-    <div
+    <main
       style={{
         backgroundColor: '#000',
         color: '#FFD700',
@@ -15,15 +12,11 @@ export default function Page() {
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>
-        Johnny Knox
-      </h1>
-      <h2 style={{ fontSize: '32px', margin: '10px 0' }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: 'white', marginBottom: '30px' }}>
-        Goated Leaderboard
-      </h3>
+      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
+      <h2 style={{ fontSize: '32px', marginTop: 0 }}>Monthly</h2>
+      <h3 style={{ fontSize: '24px', color: '#fff' }}>Goated Leaderboard</h3>
 
       <Leaderboard />
-    </div>
+    </main>
   );
 }
