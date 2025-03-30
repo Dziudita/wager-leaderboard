@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 
 type User = {
-  username: string;
-  total: number;
-  createdAt?: string;
-  timestamp?: string;
+  name: string;
+  wagered: {
+    this_month: number;
+  };
 };
 
 export default function Leaderboard() {
@@ -19,14 +19,7 @@ export default function Leaderboard() {
         if (!res.ok) throw new Error('API error');
         return res.json();
       })
-      .then((data) => {
-        const list = Array.isArray(data) ? data : data?.data || [];
-        const marchUsers = list.filter((entry: any) => {
-          const date = new Date(entry.createdAt || entry.timestamp);
-          return date.getMonth() === 2; // 0 = Sausis, 2 = Kovas
-        });
-        setUsers(marchUsers);
-      })
+      .then((data) => setUsers(data))
       .catch((err) => {
         console.error(err);
         setError(err.message);
@@ -45,38 +38,64 @@ export default function Leaderboard() {
       }}
     >
       <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
-      <h2 style={{ fontSize: '32px', marginBottom: '10px' }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: 'white', marginBottom: '30px' }}>Goated Leaderboard</h3>
+      <h2 style={{ fontSize: '32px', marginTop: 0 }}>Monthly</h2>
+      <h3 style={{ fontSize: '24px', color: '#fff' }}>Goated Leaderboard</h3>
 
-      {error && <p style={{ color: 'red' }}>Error loading leaderboard: {error}</p>}
+      {error && (
+        <p style={{ color: 'red', marginTop: '20px' }}>
+          Error loading leaderboard: {error}
+        </p>
+      )}
 
-      <table
-        style={{
-          width: '100%',
-          marginTop: '30px',
-          color: 'white',
-          borderCollapse: 'collapse',
-        }}
-      >
-        <thead>
-          <tr style={{ borderBottom: '2px solid #FFD700' }}>
-            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>Place</th>
-            <th style={{ textAlign: 'left', padding: '10px', color: '#FFD700' }}>User</th>
-            <th style={{ textAlign: 'right', padding: '10px', color: '#FFD700' }}>Wager</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <tr key={user.username} style={{ borderBottom: '1px solid #444' }}>
-              <td style={{ padding: '10px' }}>{index + 1}.</td>
-              <td style={{ padding: '10px' }}>{user.username}</td>
-              <td style={{ padding: '10px', textAlign: 'right' }}>
-                ${user.total.toFixed(2)}
-              </td>
+      {!error && users.length === 0 && (
+        <p style={{ color: '#aaa', marginTop: '20px' }}>Loading...</p>
+      )}
+
+      {users.length > 0 && (
+        <table
+          style={{
+            margin: '40px auto',
+            width: '80%',
+            borderCollapse: 'collapse',
+            fontSize: '18px',
+          }}
+        >
+          <thead>
+            <tr>
+              <th style={headerStyle}>Place</th>
+              <th style={headerStyle}>User</th>
+              <th style={headerStyle}>Wager</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((user, index) => (
+              <tr key={user.name}>
+                <td style={cellStyle}>{index + 1}.</td>
+                <td style={cellStyle}>{user.name}</td>
+                <td style={{ ...cellStyle, textAlign: 'right' }}>
+                  ${user.wagered.this_month.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
+
+const headerStyle = {
+  padding: '12px',
+  borderBottom: '2px solid #FFD700',
+  textAlign: 'left' as const,
+  color: '#FFD700',
+};
+
+const cellStyle = {
+  padding: '10px',
+  borderBottom: '1px solid #444',
+  color: '#fff',
+};
