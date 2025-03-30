@@ -3,10 +3,8 @@
 import { useEffect, useState } from 'react';
 
 type User = {
-  name: string;
-  wagered: {
-    this_month: number;
-  };
+  username?: string;
+  total?: number;
 };
 
 export default function Leaderboard() {
@@ -20,27 +18,59 @@ export default function Leaderboard() {
         return res.json();
       })
       .then((data) => {
-        setUsers(data || []);
+        if (data?.length) {
+          setUsers(data);
+        } else {
+          setUsers([]);
+        }
       })
-      .catch((err) => {
-        setError(err.message);
-      });
+      .catch((err) => setError(err.message));
   }, []);
+
+  const tableStyle = {
+    width: '100%',
+    maxWidth: '800px',
+    margin: '40px auto',
+    borderCollapse: 'collapse' as const,
+    fontSize: '1.2rem',
+  };
+
+  const headerCellStyle = {
+    padding: '12px',
+    borderBottom: '2px solid #f7c000',
+    textAlign: 'left' as const,
+    color: '#f7c000',
+  };
+
+  const cellStyle = {
+    padding: '12px',
+    borderBottom: '1px solid #444',
+    color: 'white',
+  };
+
+  const cellStyleRight = {
+    ...cellStyle,
+    textAlign: 'right' as const,
+  };
 
   return (
     <div
       style={{
         backgroundColor: '#000',
-        color: '#FFD700',
-        minHeight: '100vh',
-        padding: '40px',
+        color: '#fff',
+        padding: '40px 20px',
         fontFamily: 'Arial, sans-serif',
-        textAlign: 'center',
+        textAlign: 'center' as const,
+        minHeight: '100vh',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>Johnny Knox</h1>
-      <h2 style={{ fontSize: '32px', marginTop: 0 }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: '#fff' }}>Goated Leaderboard</h3>
+      <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#f7c000' }}>
+        Johnny Knox
+      </h1>
+      <h2 style={{ fontSize: '2rem', color: '#f7c000' }}>Monthly</h2>
+      <h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '30px' }}>
+        Goated Leaderboard
+      </h3>
 
       {error && (
         <p style={{ color: 'red', marginTop: '20px' }}>
@@ -49,51 +79,40 @@ export default function Leaderboard() {
       )}
 
       {users.length === 0 && !error && (
-        <p style={{ color: '#aaa', marginTop: '20px' }}>Loading...</p>
+        <p style={{ color: '#aaa' }}>Loading or no data available.</p>
       )}
 
       {users.length > 0 && (
-        <div style={{ marginTop: '40px' }}>
-          <table style={{ margin: '0 auto', borderCollapse: 'collapse', fontSize: '18px' }}>
-            <thead>
-              <tr>
-                <th style={headerStyle}>Place</th>
-                <th style={headerStyle}>User</th>
-                <th style={headerStyle}>Wager</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <tr key={user.name}>
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={headerCellStyle}>Place</th>
+              <th style={headerCellStyle}>User</th>
+              <th style={headerCellStyle}>Wager</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, index) => {
+              const name = user?.username || 'N/A';
+              const wager =
+                typeof user?.total === 'number'
+                  ? `$${user.total.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}`
+                  : 'N/A';
+
+              return (
+                <tr key={index}>
                   <td style={cellStyle}>{index + 1}.</td>
-                  <td style={cellStyle}>{user.name}</td>
-                  <td style={{ ...cellStyle, textAlign: 'right' }}>
-                    {typeof user.wagered?.this_month === 'number'
-                      ? `$${user.wagered.this_month.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}`
-                      : 'N/A'}
-                  </td>
+                  <td style={cellStyle}>{name}</td>
+                  <td style={cellStyleRight}>{wager}</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              );
+            })}
+          </tbody>
+        </table>
       )}
     </div>
   );
 }
-
-const headerStyle = {
-  padding: '12px',
-  borderBottom: '2px solid #FFD700',
-  textAlign: 'left' as const,
-  color: '#FFD700',
-};
-
-const cellStyle = {
-  padding: '12px',
-  borderBottom: '1px solid #444',
-  color: '#fff',
-};
