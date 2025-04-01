@@ -14,16 +14,8 @@ export default function Home() {
         textAlign: 'center',
       }}
     >
-      <h1 style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' }}>
-        Johnny Knox
-      </h1>
-      <h2 style={{ fontSize: '32px', marginBottom: '10px' }}>Monthly</h2>
-      <h3 style={{ fontSize: '24px', color: '#fff' }}>Goated Leaderboard</h3>
-
       {/* Leaderboard rodomas tik vieną kartą */}
-      <div style={{ marginTop: '40px' }}>
-        <Leaderboard />
-      </div>
+      <Leaderboard />
     </div>
   );
 }
