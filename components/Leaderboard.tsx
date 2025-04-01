@@ -131,8 +131,7 @@ export default function Leaderboard() {
     >
       <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#f7c000' }}>Johnny Knox</h1>
 <h2 style={{ fontSize: '2rem', color: '#f7c000' }}>Monthly</h2>
-<h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>Goated Leaderboard</h3>
-      <p style={{ color: '#9eff3e', fontSize: '1rem', marginBottom: '30px' }}>
+<h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>Goated Leaderboard</h3><p style={{ color: '#9eff3e', fontSize: '1rem', marginBottom: '30px' }}>
         Ends in: {days} D {hours} H {minutes} M {seconds} S (UTC)
       </p>
       <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '30px' }}>
