@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+const REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutes in milliseconds
+
 type User = {
   username?: string;
   total?: number;
@@ -41,7 +43,7 @@ export default function Leaderboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchLeaderboard = () => {
     fetch('/api/leaderboard')
       .then((res) => {
         if (!res.ok) throw new Error('API error');
@@ -55,6 +57,12 @@ export default function Leaderboard() {
         }
       })
       .catch((err) => setError(err.message));
+  };
+
+  useEffect(() => {
+    fetchLeaderboard();
+    const interval = setInterval(fetchLeaderboard, REFRESH_INTERVAL);
+    return () => clearInterval(interval);
   }, []);
 
   const tableStyle = {
@@ -76,6 +84,7 @@ export default function Leaderboard() {
     padding: '12px',
     borderBottom: '1px solid #444',
     color: 'white',
+    textAlign: 'left' as const,
   };
 
   const cellStyleRight = {
@@ -101,9 +110,12 @@ export default function Leaderboard() {
         Johnny Knox
       </h1>
       <h2 style={{ fontSize: '2rem', color: '#f7c000' }}>Monthly</h2>
-      <h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '30px' }}>
+      <h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>
         Goated Leaderboard
       </h3>
+      <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '30px' }}>
+        This leaderboard refreshes automatically every 30 minutes.
+      </p>
 
       {error && (
         <p style={{ color: 'red', marginTop: '20px' }}>
@@ -149,7 +161,7 @@ export default function Leaderboard() {
 
                 return (
                   <tr key={index}>
-                    <td style={cellStyle}>{index + 1}.</td>
+                    <td style={cellStyleRight}>{index + 1}.</td>
                     <td style={cellStyle}>{name}</td>
                     <td style={cellStyleRight}>{wager}</td>
                     <td style={cellStyleRight}>{payoutDisplay}</td>
