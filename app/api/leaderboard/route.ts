@@ -5,7 +5,7 @@ export async function GET() {
     headers: {
       'Cache-Control': 'no-store',
     },
-    next: { revalidate: 0 }, // apsaugo nuo cache’inimo
+    next: { revalidate: 0 },
   });
 
   if (!response.ok) {
@@ -17,9 +17,9 @@ export async function GET() {
   const formatted = json.data
     .map((user: any) => ({
       username: user.name,
-      total: user.wagered.this_month, // ✅ BŪTINAI naudok this_month!
+      total: user.wagered.this_month,
     }))
-    .sort((a, b) => b.total - a.total);
+    .sort((a: { total: number }, b: { total: number }) => b.total - a.total); // 🛠️ FIXED
 
   return new Response(JSON.stringify(formatted), {
     status: 200,
