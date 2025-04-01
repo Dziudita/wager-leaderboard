@@ -138,6 +138,9 @@ export default function Leaderboard() {
       <h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>
         Goated Leaderboard
       </h3>
+      <p style={{ color: '#f7c000', fontSize: '0.95rem', marginBottom: '20px' }}>
+        ✅ Minimum Wager Requirement: Players must wager at least $20,000 within the month to qualify for the leaderboard rewards.
+      </p>
       <p style={{ color: '#9eff3e', fontSize: '1rem', marginBottom: '30px' }}>
         Ends in: {days} D {hours} H {minutes} M {seconds} S (UTC)
       </p>
