@@ -17,17 +17,17 @@ const rewardTiers = [
   { threshold: 3000000, pool: 6840 },
   { threshold: 2500000, pool: 5700 },
   { threshold: 2000000, pool: 4560 },
-  { threshold: 1750000, pool: 3990 },
+  { threshold: 1750000, pool: 3990.4 },
   { threshold: 1500000, pool: 3420 },
-  { threshold: 1250000, pool: 2850 },
+  { threshold: 1250000, pool: 2850.4 },
   { threshold: 1000000, pool: 2280 },
-  { threshold: 750000, pool: 1710 },
+  { threshold: 750000, pool: 1710.4 },
   { threshold: 500000, pool: 1140 },
   { threshold: 400000, pool: 912 },
   { threshold: 300000, pool: 684 },
   { threshold: 200000, pool: 456 },
   { threshold: 100000, pool: 228 },
-  { threshold: 50000, pool: 114 },
+  { threshold: 50000, pool: 114.4 },
 ];
 
 function getRewardPool(totalWager: number) {
@@ -115,8 +115,9 @@ export default function Leaderboard() {
     textAlign: 'center' as const,
   };
 
-  const totalMonthlyWager = users.reduce((sum, user) => sum + (user.total || 0), 0);
-  const rewardPool = getRewardPool(totalMonthlyWager);
+  const eligibleUsers = users.filter((user) => (user.total || 0) >= 20000);
+  const totalEligibleWager = eligibleUsers.reduce((sum, user) => sum + (user.total || 0), 0);
+  const rewardPool = getRewardPool(totalEligibleWager);
 
   return (
     <div
@@ -129,9 +130,14 @@ export default function Leaderboard() {
         minHeight: '100vh',
       }}
     >
-      <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#f7c000' }}>Johnny Knox</h1>
-<h2 style={{ fontSize: '2rem', color: '#f7c000' }}>Monthly</h2>
-<h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>Goated Leaderboard</h3><p style={{ color: '#9eff3e', fontSize: '1rem', marginBottom: '30px' }}>
+      <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#f7c000' }}>
+        Johnny Knox
+      </h1>
+      <h2 style={{ fontSize: '2rem', color: '#f7c000' }}>Monthly</h2>
+      <h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>
+        Goated Leaderboard
+      </h3>
+      <p style={{ color: '#9eff3e', fontSize: '1rem', marginBottom: '30px' }}>
         Ends in: {days} D {hours} H {minutes} M {seconds} S (UTC)
       </p>
       <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '30px' }}>
@@ -151,7 +157,7 @@ export default function Leaderboard() {
       {users.length > 0 && (
         <>
           <p style={{ color: '#f7c000', fontSize: '1rem', marginBottom: '10px' }}>
-            Total Wagered: ${totalMonthlyWager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            Eligible Wagered: ${totalEligibleWager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
           <p style={{ color: '#f7c000', fontSize: '1rem', marginBottom: '30px' }}>
             Reward Pool: ${rewardPool.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -174,7 +180,12 @@ export default function Leaderboard() {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}`;
-                const payout = rewardPool > 0 ? (wagerValue / totalMonthlyWager) * rewardPool : 0;
+
+                const payout =
+                  wagerValue >= 20000 && rewardPool > 0 && totalEligibleWager > 0
+                    ? (wagerValue / totalEligibleWager) * rewardPool
+                    : 0;
+
                 const payoutDisplay = `$${payout.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
