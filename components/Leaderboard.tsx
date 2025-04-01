@@ -7,6 +7,36 @@ type User = {
   total?: number;
 };
 
+const rewardTiers = [
+  { threshold: 5000000, pool: 11400 },
+  { threshold: 4500000, pool: 10260 },
+  { threshold: 4000000, pool: 9120 },
+  { threshold: 3500000, pool: 7980 },
+  { threshold: 3000000, pool: 6840 },
+  { threshold: 2500000, pool: 5700 },
+  { threshold: 2000000, pool: 4560 },
+  { threshold: 1750000, pool: 3990 },
+  { threshold: 1500000, pool: 3420 },
+  { threshold: 1250000, pool: 2850 },
+  { threshold: 1000000, pool: 2280 },
+  { threshold: 750000, pool: 1710 },
+  { threshold: 500000, pool: 1140 },
+  { threshold: 400000, pool: 912 },
+  { threshold: 300000, pool: 684 },
+  { threshold: 200000, pool: 456 },
+  { threshold: 100000, pool: 228 },
+  { threshold: 50000, pool: 114 },
+];
+
+function getRewardPool(totalWager: number) {
+  for (const tier of rewardTiers) {
+    if (totalWager >= tier.threshold) {
+      return tier.pool;
+    }
+  }
+  return 0;
+}
+
 export default function Leaderboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +59,7 @@ export default function Leaderboard() {
 
   const tableStyle = {
     width: '100%',
-    maxWidth: '800px',
+    maxWidth: '900px',
     margin: '40px auto',
     borderCollapse: 'collapse' as const,
     fontSize: '1.2rem',
@@ -52,6 +82,9 @@ export default function Leaderboard() {
     ...cellStyle,
     textAlign: 'right' as const,
   };
+
+  const totalMonthlyWager = users.reduce((sum, user) => sum + (user.total || 0), 0);
+  const rewardPool = getRewardPool(totalMonthlyWager);
 
   return (
     <div
@@ -83,35 +116,49 @@ export default function Leaderboard() {
       )}
 
       {users.length > 0 && (
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={headerCellStyle}>Place</th>
-              <th style={headerCellStyle}>User</th>
-              <th style={headerCellStyle}>Wager</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, index) => {
-              const name = user?.username || 'N/A';
-              const wager =
-                typeof user?.total === 'number'
-                  ? `$${user.total.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}`
-                  : 'N/A';
+        <>
+          <p style={{ color: '#f7c000', fontSize: '1rem', marginBottom: '10px' }}>
+            Total Wagered: ${totalMonthlyWager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+          <p style={{ color: '#f7c000', fontSize: '1rem', marginBottom: '30px' }}>
+            Reward Pool: ${rewardPool.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
 
-              return (
-                <tr key={index}>
-                  <td style={cellStyle}>{index + 1}.</td>
-                  <td style={cellStyle}>{name}</td>
-                  <td style={cellStyleRight}>{wager}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={headerCellStyle}>Place</th>
+                <th style={headerCellStyle}>User</th>
+                <th style={headerCellStyle}>Wager</th>
+                <th style={headerCellStyle}>Payout</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.slice(0, 10).map((user, index) => {
+                const name = user?.username || 'N/A';
+                const wagerValue = user?.total || 0;
+                const wager = `$${wagerValue.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`;
+                const payout = rewardPool > 0 ? (wagerValue / totalMonthlyWager) * rewardPool : 0;
+                const payoutDisplay = `$${payout.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`;
+
+                return (
+                  <tr key={index}>
+                    <td style={cellStyle}>{index + 1}.</td>
+                    <td style={cellStyle}>{name}</td>
+                    <td style={cellStyleRight}>{wager}</td>
+                    <td style={cellStyleRight}>{payoutDisplay}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );
