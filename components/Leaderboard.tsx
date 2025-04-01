@@ -159,7 +159,10 @@ export default function Leaderboard() {
               })}
             </tbody>
           </table>
-        </>
+<p style={{ color: '#aaa', fontSize: '0.9rem', marginTop: '20px' }}>
+  Leaderboard will be payed out within 24 - 48 hours.
+</p>
+</>
       )}
     </div>
   );
