@@ -39,9 +39,37 @@ function getRewardPool(totalWager: number) {
   return 0;
 }
 
+function useCountdownToEndOfMonthUTC() {
+  const calculateTimeLeft = () => {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth();
+    const end = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0));
+    const diff = end.getTime() - now.getTime();
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    };
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return timeLeft;
+}
+
 export default function Leaderboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const { days, hours, minutes, seconds } = useCountdownToEndOfMonthUTC();
 
   const fetchLeaderboard = () => {
     fetch('/api/leaderboard')
@@ -101,7 +129,16 @@ export default function Leaderboard() {
         minHeight: '100vh',
       }}
     >
-      
+      <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: '#f7c000' }}>
+        Johnny Knox
+      </h1>
+      <h2 style={{ fontSize: '2rem', color: '#f7c000' }}>Monthly</h2>
+      <h3 style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>
+        Goated Leaderboard
+      </h3>
+      <p style={{ color: '#9eff3e', fontSize: '1rem', marginBottom: '30px' }}>
+        Ends in: {days} D {hours} H {minutes} M {seconds} S (UTC)
+      </p>
       <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '30px' }}>
         This leaderboard refreshes automatically every 30 minutes.
       </p>
@@ -159,10 +196,11 @@ export default function Leaderboard() {
               })}
             </tbody>
           </table>
-<p style={{ color: '#aaa', fontSize: '0.9rem', marginTop: '20px' }}>
-  Leaderboard will be payed out within 24 - 48 hours.
-</p>
-</>
+
+          <p style={{ color: '#aaa', fontSize: '0.9rem', marginTop: '20px' }}>
+            Leaderboard will be payed out within 24 - 48 hours.
+          </p>
+        </>
       )}
     </div>
   );
