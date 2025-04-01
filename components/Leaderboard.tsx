@@ -115,6 +115,7 @@ export default function Leaderboard() {
     textAlign: 'center' as const,
   };
 
+  const totalWager = users.reduce((sum, user) => sum + (user.total || 0), 0);
   const eligibleUsers = users.filter((user) => (user.total || 0) >= 20000);
   const totalEligibleWager = eligibleUsers.reduce((sum, user) => sum + (user.total || 0), 0);
   const rewardPool = getRewardPool(totalEligibleWager);
@@ -156,6 +157,9 @@ export default function Leaderboard() {
 
       {users.length > 0 && (
         <>
+          <p style={{ color: '#f7c000', fontSize: '1rem', marginBottom: '10px' }}>
+            Total Wagered: ${totalWager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
           <p style={{ color: '#f7c000', fontSize: '1rem', marginBottom: '10px' }}>
             Eligible Wagered: ${totalEligibleWager.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
