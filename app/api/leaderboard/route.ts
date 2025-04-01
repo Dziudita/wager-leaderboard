@@ -1,26 +1,28 @@
 // app/api/leaderboard/route.ts
-import { NextResponse } from 'next/server';
 
 export async function GET() {
-  try {
-    const response = await fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA');
-    const json = await response.json();
+  const response = await fetch('https://api.goated.com/user2/affiliate/referral-leaderboard/OQID5MA', {
+    headers: {
+      'Cache-Control': 'no-store',
+    },
+    next: { revalidate: 0 }, // apsaugo nuo cache’inimo
+  });
 
-    if (!json.success || !Array.isArray(json.data)) {
-      return NextResponse.json({ error: 'Invalid API response' }, { status: 500 });
-    }
-
-    const filtered = json.data
-      .filter((user: any) => user?.wagered?.this_month > 0)
-      .sort((a: any, b: any) => b.wagered.this_month - a.wagered.this_month)
-      .slice(0, 10)
-      .map((user: any) => ({
-        username: user.name,
-        total: user.wagered.this_month,
-      }));
-
-    return NextResponse.json(filtered);
-  } catch (error) {
-    return NextResponse.json({ error: 'API fetch failed' }, { status: 500 });
+  if (!response.ok) {
+    return new Response(JSON.stringify({ error: 'Failed to fetch' }), { status: 500 });
   }
+
+  const json = await response.json();
+
+  const formatted = json.data
+    .map((user: any) => ({
+      username: user.name,
+      total: user.wagered.this_month, // ✅ BŪTINAI naudok this_month!
+    }))
+    .sort((a, b) => b.total - a.total);
+
+  return new Response(JSON.stringify(formatted), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
