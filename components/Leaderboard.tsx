@@ -76,20 +76,15 @@ export default function Leaderboard() {
   const headerCellStyle = {
     padding: '12px',
     borderBottom: '2px solid #f7c000',
-    textAlign: 'left' as const,
     color: '#f7c000',
+    textAlign: 'center' as const,
   };
 
   const cellStyle = {
     padding: '12px',
     borderBottom: '1px solid #444',
     color: 'white',
-    textAlign: 'left' as const,
-  };
-
-  const cellStyleRight = {
-    ...cellStyle,
-    textAlign: 'right' as const,
+    textAlign: 'center' as const,
   };
 
   const totalMonthlyWager = users.reduce((sum, user) => sum + (user.total || 0), 0);
@@ -161,10 +156,10 @@ export default function Leaderboard() {
 
                 return (
                   <tr key={index}>
-                    <td style={cellStyleRight}>{index + 1}.</td>
+                    <td style={cellStyle}>{index + 1}.</td>
                     <td style={cellStyle}>{name}</td>
-                    <td style={cellStyleRight}>{wager}</td>
-                    <td style={cellStyleRight}>{payoutDisplay}</td>
+                    <td style={cellStyle}>{wager}</td>
+                    <td style={cellStyle}>{payoutDisplay}</td>
                   </tr>
                 );
               })}
